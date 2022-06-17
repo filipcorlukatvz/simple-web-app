@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-web-app-deployment
+  namespace: frontend
+  labels:
+    app: simple-web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: simple-web-app
+  template:
+    metadata:
+      labels:
+        app: simple-web-app
+    spec:
+      containers:
+      - name: simple-web-app
+        image: filipcorlukatvz/simple-web-app:1.22
+        ports:
+        - containerPort: 8080
+        env:
+        - name: KUBERNETES_POD_NAME
+          valueFrom:              
+            fieldRef:
+              fieldPath: metadata.name
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: KUBERNETES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          limits:
+            cpu: 10m
+            memory: 50Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi
